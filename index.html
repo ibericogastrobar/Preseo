@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PRESEO — Registro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --pink:   #f0295a;
+      --gold:   #e8922a;
+      --cream:  #f5ede0;
+      --dark:   #0a0a0a;
+      --card:   #111111;
+      --border: rgba(240,41,90,0.25);
+    }
+
+    body {
+      background: var(--dark);
+      color: #fff;
+      font-family: 'Barlow', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── ambient glow blobs ── */
+    body::before, body::after {
+      content: '';
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    body::before {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(240,41,90,0.18) 0%, transparent 70%);
+      top: -100px; left: -150px;
+    }
+    body::after {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(232,146,42,0.14) 0%, transparent 70%);
+      bottom: 0; right: -100px;
+    }
+
+    /* ── layout ── */
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 48px 24px 64px;
+    }
+
+    /* ── header ── */
+    .header { text-align: center; margin-bottom: 40px; }
+
+    .eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.28em;
+      color: var(--pink);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(72px, 22vw, 110px);
+      font-weight: 900;
+      color: var(--cream);
+      letter-spacing: -0.01em;
+      line-height: 0.9;
+      text-transform: uppercase;
+    }
+
+    .divider {
+      width: 48px; height: 3px;
+      background: linear-gradient(90deg, var(--pink), var(--gold));
+      border-radius: 2px;
+      margin: 16px auto;
+    }
+
+    .tagline {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.22em;
+      color: rgba(255,255,255,0.45);
+      text-transform: uppercase;
+    }
+
+    .event-meta {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+    .meta-chip {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 40px;
+      border: 1px solid var(--border);
+      color: rgba(255,255,255,0.5);
+    }
+    .meta-chip span { color: var(--gold); }
+
+    /* ── promoter select ── */
+    .promoter-section { margin-bottom: 32px; }
+
+    .section-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.28em;
+      color: rgba(255,255,255,0.35);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .promoter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+    }
+
+    .promoter-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 10px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .promoter-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(240,41,90,0.08), rgba(232,146,42,0.08));
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .promoter-btn:hover::before { opacity: 1; }
+    .promoter-btn:hover { border-color: rgba(240,41,90,0.5); }
+
+    .promoter-btn.active {
+      border-color: var(--pink);
+      background: rgba(240,41,90,0.08);
+    }
+    .promoter-btn.active::before { opacity: 1; }
+    .promoter-btn.active .check { opacity: 1; transform: scale(1); }
+
+    .check {
+      position: absolute;
+      top: 8px; right: 8px;
+      width: 18px; height: 18px;
+      background: var(--pink);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px;
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all 0.2s ease;
+    }
+
+    .promoter-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #fff;
+      line-height: 1.2;
+    }
+    .promoter-role {
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-top: 3px;
+    }
+
+    /* ── selected promoter banner ── */
+    .selected-banner {
+      background: rgba(240,41,90,0.07);
+      border: 1px solid rgba(240,41,90,0.3);
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-top: 14px;
+      display: none;
+      align-items: center;
+      gap: 12px;
+    }
+    .selected-banner.show { display: flex; }
+    .selected-banner-dot {
+      width: 8px; height: 8px;
+      background: var(--pink);
+      border-radius: 50%;
+      flex-shrink: 0;
+      box-shadow: 0 0 8px var(--pink);
+    }
+    .selected-banner-text {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+    }
+    .selected-banner-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #fff;
+    }
+
+    /* ── form card ── */
+    .form-card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 28px 24px;
+      margin-bottom: 20px;
+    }
+
+    .field { margin-bottom: 20px; }
+    .field:last-child { margin-bottom: 0; }
+
+    .field-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .field input, .field select {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-family: 'Barlow', sans-serif;
+      font-size: 15px;
+      color: #fff;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      -webkit-appearance: none;
+    }
+    .field input::placeholder { color: rgba(255,255,255,0.2); }
+    .field input:focus, .field select:focus {
+      border-color: var(--pink);
+      background: rgba(240,41,90,0.05);
+    }
+    .field select option { background: #1a1a1a; color: #fff; }
+
+    /* ── row ── */
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+
+    /* ── gender toggle ── */
+    .gender-toggle {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .gender-btn {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 12px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .gender-btn:hover { border-color: rgba(240,41,90,0.4); }
+    .gender-btn.active { border-color: var(--pink); background: rgba(240,41,90,0.08); }
+    .gender-btn .g-icon { font-size: 20px; margin-bottom: 4px; }
+    .gender-btn .g-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+    }
+    .gender-btn.active .g-label { color: var(--pink); }
+
+    /* ── submit button ── */
+    .submit-btn {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, var(--pink), #c41f48);
+      border: none;
+      border-radius: 12px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+      margin-top: 8px;
+      box-shadow: 0 4px 24px rgba(240,41,90,0.35);
+    }
+    .submit-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 32px rgba(240,41,90,0.45);
+    }
+    .submit-btn:active { transform: translateY(0); }
+    .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+    /* ── info strip ── */
+    .info-strip {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+    .info-tile {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 16px 14px;
+      text-align: center;
+    }
+    .info-tile-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      margin-bottom: 5px;
+    }
+    .info-tile-value {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .pink { color: var(--pink); }
+    .gold { color: var(--gold); }
+
+    /* ── success state ── */
+    .success-screen {
+      display: none;
+      text-align: center;
+      padding: 48px 0;
+    }
+    .success-screen.show { display: block; }
+    .form-area.hide { display: none; }
+
+    .success-icon {
+      width: 72px; height: 72px;
+      background: linear-gradient(135deg, var(--pink), var(--gold));
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px;
+      margin: 0 auto 24px;
+      box-shadow: 0 0 48px rgba(240,41,90,0.4);
+    }
+    .success-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 42px;
+      font-weight: 900;
+      text-transform: uppercase;
+      color: var(--cream);
+      margin-bottom: 8px;
+    }
+    .success-sub {
+      font-size: 14px;
+      color: rgba(255,255,255,0.4);
+      line-height: 1.6;
+      max-width: 300px;
+      margin: 0 auto 32px;
+    }
+    .success-card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 24px;
+      text-align: left;
+    }
+    .success-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .success-row:last-child { border-bottom: none; }
+    .success-row-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+    }
+    .success-row-val {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #fff;
+    }
+
+    /* ── footer ── */
+    .footer {
+      text-align: center;
+      margin-top: 48px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.15);
+    }
+
+    /* ── validation ── */
+    .field input.error { border-color: var(--pink); }
+    .err-msg {
+      font-size: 11px;
+      color: var(--pink);
+      margin-top: 5px;
+      display: none;
+      font-family: 'Barlow Condensed', sans-serif;
+      letter-spacing: 0.1em;
+    }
+    .err-msg.show { display: block; }
+
+    @media (max-width: 380px) {
+      .promoter-grid { grid-template-columns: 1fr 1fr; }
+      .field-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <header class="header">
+    <p class="eyebrow">El Jueves Es Nuestro</p>
+    <h1 class="logo">Preseo</h1>
+    <div class="divider"></div>
+    <p class="tagline">Ibérico Gastrobar · Jueves 15 de Mayo</p>
+    <div class="event-meta">
+      <div class="meta-chip">Barra Libre <span>Hasta 12AM</span></div>
+      <div class="meta-chip">Mujeres <span>Free Cover</span></div>
+      <div class="meta-chip">DJ <span>Miguel Ramos</span></div>
+    </div>
+  </header>
+
+  <!-- INFO TILES -->
+  <div class="info-strip">
+    <div class="info-tile">
+      <div class="info-tile-label">Hombres en lista</div>
+      <div class="info-tile-value pink">$12 Cover</div>
+    </div>
+    <div class="info-tile">
+      <div class="info-tile-label">Mujeres en lista</div>
+      <div class="info-tile-value gold">Free Cover</div>
+    </div>
+  </div>
+
+  <!-- FORM AREA -->
+  <div class="form-area" id="formArea">
+
+    <!-- PROMOTER SELECTOR -->
+    <div class="promoter-section">
+      <p class="section-label">¿De parte de qué promotor vienes?</p>
+      <div class="promoter-grid" id="promoterGrid">
+        <!-- generated by JS -->
+      </div>
+      <div class="selected-banner" id="selectedBanner">
+        <div class="selected-banner-dot"></div>
+        <div>
+          <div class="selected-banner-text">Invitado por</div>
+          <div class="selected-banner-name" id="selectedName">—</div>
+        </div>
+      </div>
+      <p class="err-msg" id="promoterErr" style="margin-top:10px;">Selecciona un promotor</p>
+    </div>
+
+    <!-- DATOS PERSONALES -->
+    <div class="form-card">
+      <p class="section-label" style="margin-bottom:20px;">Tus datos</p>
+
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label" for="nombre">Nombre</label>
+          <input type="text" id="nombre" placeholder="Juan" autocomplete="given-name"/>
+          <p class="err-msg" id="nombreErr">Ingresa tu nombre</p>
+        </div>
+        <div class="field">
+          <label class="field-label" for="apellido">Apellido</label>
+          <input type="text" id="apellido" placeholder="Pérez" autocomplete="family-name"/>
+          <p class="err-msg" id="apellidoErr">Ingresa tu apellido</p>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="cedula">Número de Cédula</label>
+        <input type="text" id="cedula" placeholder="0000000000" inputmode="numeric" maxlength="13"/>
+        <p class="err-msg" id="cedulaErr">Ingresa un número de cédula válido</p>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Género</label>
+        <div class="gender-toggle">
+          <button class="gender-btn" data-gender="mujer" onclick="selectGender('mujer')">
+            <div class="g-icon">♀</div>
+            <div class="g-label">Mujer</div>
+          </button>
+          <button class="gender-btn" data-gender="hombre" onclick="selectGender('hombre')">
+            <div class="g-icon">♂</div>
+            <div class="g-label">Hombre</div>
+          </button>
+        </div>
+        <p class="err-msg" id="generoErr">Selecciona tu género</p>
+      </div>
+    </div>
+
+    <button class="submit-btn" id="submitBtn" onclick="submitForm()">
+      Confirmar Asistencia
+    </button>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="success-screen" id="successScreen">
+    <div class="success-icon">✓</div>
+    <h2 class="success-title">¡Estás en lista!</h2>
+    <p class="success-sub">Tu registro fue confirmado. Te esperamos el jueves en Ibérico Gastrobar.</p>
+    <div class="success-card" id="successCard"></div>
+  </div>
+
+  <footer class="footer">PRESEO · Ibérico Gastrobar · Mayo 2025</footer>
+</div>
+
+<script>
+  // ── Promoters list — edit freely ──
+  const PROMOTERS = [
+    { name: "Carlos M.",   role: "Promotor" },
+    { name: "Andrés V.",   role: "Promotor" },
+    { name: "Daniela R.",  role: "Promotora" },
+    { name: "Sebastián L.", role: "Promotor" },
+    { name: "Valeria P.",  role: "Promotora" },
+    { name: "Diego F.",    role: "Promotor" },
+  ];
+
+  let selectedPromoter = null;
+  let selectedGender   = null;
+
+  // Build promoter grid
+  const grid = document.getElementById('promoterGrid');
+  PROMOTERS.forEach((p, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'promoter-btn';
+    btn.dataset.index = i;
+    btn.onclick = () => selectPromoter(i);
+    btn.innerHTML = `
+      <span class="check">✓</span>
+      <div class="promoter-name">${p.name}</div>
+      <div class="promoter-role">${p.role}</div>
+    `;
+    grid.appendChild(btn);
+  });
+
+  function selectPromoter(i) {
+    selectedPromoter = i;
+    document.querySelectorAll('.promoter-btn').forEach((b, idx) => {
+      b.classList.toggle('active', idx === i);
+    });
+    const p = PROMOTERS[i];
+    document.getElementById('selectedName').textContent = p.name;
+    document.getElementById('selectedBanner').classList.add('show');
+    document.getElementById('promoterErr').classList.remove('show');
+  }
+
+  function selectGender(g) {
+    selectedGender = g;
+    document.querySelectorAll('.gender-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.gender === g);
+    });
+    document.getElementById('generoErr').classList.remove('show');
+  }
+
+  function submitForm() {
+    let valid = true;
+
+    if (selectedPromoter === null) {
+      document.getElementById('promoterErr').classList.add('show');
+      valid = false;
+    }
+
+    const nombre   = document.getElementById('nombre').value.trim();
+    const apellido = document.getElementById('apellido').value.trim();
+    const cedula   = document.getElementById('cedula').value.trim();
+
+    if (!nombre) {
+      document.getElementById('nombre').classList.add('error');
+      document.getElementById('nombreErr').classList.add('show');
+      valid = false;
+    } else {
+      document.getElementById('nombre').classList.remove('error');
+      document.getElementById('nombreErr').classList.remove('show');
+    }
+
+    if (!apellido) {
+      document.getElementById('apellido').classList.add('error');
+      document.getElementById('apellidoErr').classList.add('show');
+      valid = false;
+    } else {
+      document.getElementById('apellido').classList.remove('error');
+      document.getElementById('apellidoErr').classList.remove('show');
+    }
+
+    if (!cedula || cedula.length < 6 || !/^\d+$/.test(cedula)) {
+      document.getElementById('cedula').classList.add('error');
+      document.getElementById('cedulaErr').classList.add('show');
+      valid = false;
+    } else {
+      document.getElementById('cedula').classList.remove('error');
+      document.getElementById('cedulaErr').classList.remove('show');
+    }
+
+    if (!selectedGender) {
+      document.getElementById('generoErr').classList.add('show');
+      valid = false;
+    }
+
+    if (!valid) return;
+
+    // Show success
+    const p = PROMOTERS[selectedPromoter];
+    const coverText = selectedGender === 'mujer' ? 'Free Cover ✨' : '$12 Cover';
+
+    document.getElementById('successCard').innerHTML = `
+      <div class="success-row">
+        <span class="success-row-label">Nombre</span>
+        <span class="success-row-val">${nombre} ${apellido}</span>
+      </div>
+      <div class="success-row">
+        <span class="success-row-label">Cédula</span>
+        <span class="success-row-val">${cedula}</span>
+      </div>
+      <div class="success-row">
+        <span class="success-row-label">Promotor</span>
+        <span class="success-row-val" style="color:var(--pink)">${p.name}</span>
+      </div>
+      <div class="success-row">
+        <span class="success-row-label">Cover</span>
+        <span class="success-row-val" style="color:var(--gold)">${coverText}</span>
+      </div>
+    `;
+
+    document.getElementById('formArea').classList.add('hide');
+    document.getElementById('successScreen').classList.add('show');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
